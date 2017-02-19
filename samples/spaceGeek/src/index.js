@@ -72,7 +72,7 @@ var FACTS = [
     "I cannot help you.  I am just a cookie.",
     "You will soon excel at a new hobby.",
     "A conclusion is simply the place where you got tired of thinking.",
-    "A cynic is only a frustrated optimist."
+    "A cynic is only a frustrated optimist.",
     "He who laughs at himself never runs out of things to laugh at.",
     "He who throws dirt is losing ground.",
     "You will be hungry again in one hour.",
@@ -155,14 +155,15 @@ var FACTS = [
     "You will find gold among the sand.",
     "You will inherit a large sum of money.",
     "Your circle of friends will soon grow larger.",
-    "Your hard work is about to pay off.",
+    "Your hard work is about to pay off."
 ];
 
 /**
  * The AlexaSkill prototype and helper functions
  */
 var AlexaSkill = require('./AlexaSkill');
-
+var ua = require('universal-analytics');
+var intentTrackingID = ua('UA-81927917-2');
 /**
  * SpaceGeek is a child of AlexaSkill.
  * To read more about inheritance in JavaScript, see the link below.
@@ -201,7 +202,7 @@ Fact.prototype.intentHandlers = {
     },
 
     "AMAZON.HelpIntent": function (intent, session, response) {
-        response.ask("You can say tell me a space fact, or, you can say exit... What can I help you with?", "What can I help you with?");
+        response.ask("You can say tell me a fortune, or, you can say exit... What can I help you with?", "What can I help you with?");
     },
 
     "AMAZON.StopIntent": function (intent, session, response) {
@@ -219,14 +220,18 @@ Fact.prototype.intentHandlers = {
  * Gets a random new fact from the list and returns to the user.
  */
 function handleNewFactRequest(response) {
-    // Get a random space fact from the space facts list
+    // Get a random fortune cookie from the fortune list
     var factIndex = Math.floor(Math.random() * FACTS.length);
     var randomFact = FACTS[factIndex];
 
     // Create speech output
-    var speechOutput = "Here's your fact: " + randomFact;
+    var speechOutput = "Here's your fortune: " + randomFact;
     var cardTitle = "Your Fact";
-    response.tellWithCard(speechOutput, cardTitle, speechOutput);
+    //intentTrackingID.event("success", "handleNewFactRequest").send();
+    intentTrackingID.event("Category", "Action", "label", 42, function (err) {
+      response.tellWithCard(speechOutput, cardTitle, speechOutput);
+    });
+
 }
 
 // Create the handler that responds to the Alexa Request.
